@@ -1,0 +1,125 @@
+{% extends "basic.html" %}
+{% load static %}
+
+{% block title %}Вход в личный кабинет{% endblock %}
+
+{% block content %}
+<div class="flex flex-col min-h-full bg-white">
+  <header class="p-4 mb-8 bg-white shadow-sm">
+    <div class="flex justify-between items-center mx-auto my-0 max-w-[1232px]">
+      <img src="{% static 'media/logo.png' %}" class="object-cover overflow-hidden w-56 aspect-[2.42]" alt="Logo">
+      <div class="flex gap-2">
+        <a href="{% url 'users:register' %}" class="px-6 py-2 font-medium text-teal-600 bg-white rounded border border-teal-600 border-solid">
+          Зарегистрироваться
+        </a>
+        <a href="{% url 'users:login' %}" class="px-6 py-2 font-medium text-white bg-rose-600 rounded border-[none]">
+          Вход в личный кабинет
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex flex-1 justify-center px-4 py-0 mx-auto my-0 max-w-[1232px]">
+    <div class="p-8 bg-white rounded-lg border border-solid border-zinc-200 w-[436px] max-sm:ml-0 max-sm:w-[343px]">
+      <h2 class="mb-6 text-2xl font-medium">Вход в личный кабинет</h2>
+
+      <form method="post" id="login-form">
+        {% csrf_token %}
+
+        {% if messages %}
+          <div class="mb-4 p-3 bg-red-100 text-red-700 rounded">
+            {% for message in messages %}
+              <p>{{ message }}</p>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <div class="relative mb-4">
+          <input type="text" id="{{ form.email.id_for_label }}" name="{{ form.email.name }}" class="block w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-teal-600 peer" placeholder=" " required>
+          <label for="{{ form.email.id_for_label }}" class="absolute left-4 top-2 text-sm text-gray-500 transition-all duration-300 peer-focus:-top-2 peer-focus:text-xs peer-focus:text-teal-600">
+            {{ form.email.label }}
+          </label>
+          {% if form.email.errors %}
+            <div class="text-red-500 text-sm mt-1">{{ form.email.errors }}</div>
+          {% endif %}
+        </div>
+
+        <div class="relative mb-4">
+          <input type="password" id="{{ form.password.id_for_label }}" name="{{ form.password.name }}" class="block w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-teal-600 peer" placeholder=" " required>
+          <label for="{{ form.password.id_for_label }}" class="absolute left-4 top-2 text-sm text-gray-500 transition-all duration-300 peer-focus:-top-2 peer-focus:text-xs peer-focus:text-teal-600">
+            Пароль
+          </label>
+          {% if form.password.errors %}
+            <div class="text-red-500 text-sm mt-1">{{ form.password.errors }}</div>
+          {% endif %}
+        </div>
+
+        <div class="mt-4 mb-6">
+          <a href="{% url 'users:forgot_password' %}" class="font-medium text-teal-600 cursor-pointer">
+            Забыли пароль?
+          </a>
+        </div>
+
+        <button type="submit"
+                class="w-full h-10 font-medium text-white bg-rose-600 rounded border-[none]"
+                id="login-button"
+                style="opacity: 0.5; cursor: not-allowed;">
+          Продолжить
+        </button>
+
+        <div class="flex gap-6 items-center mx-0 my-6">
+          <hr class="flex-1 border border-white border-solid">
+          <span>или</span>
+          <hr class="flex-1 border border-white border-solid">
+        </div>
+
+        <button type="button" class="flex justify-center items-center mb-4 w-full h-10 rounded border border-solid border-slate-500">
+          <img src="{% static 'media/gosuslugi.png' %}" class="object-cover overflow-hidden aspect-[4.41] w-[120px]" alt="Госуслуги">
+        </button>
+
+        <div class="font-medium text-center">
+          <a href="{% url 'users:register' %}" class="text-teal-600 cursor-pointer">
+            Создать личный кабинет
+          </a>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <footer class="px-8 py-4 mt-12 border-t border-solid border-t-zinc-200">
+    <div class="flex justify-between mx-auto my-0 max-w-[1232px]">
+      <div class="flex gap-6">
+        <a href="#" class="font-medium text-teal-600 cursor-pointer">О компании</a>
+        <a href="#" class="font-medium text-teal-600 cursor-pointer">Пользовательское соглашение</a>
+        <a href="#" class="font-medium text-teal-600 cursor-pointer">Наши учреждения</a>
+      </div>
+      <div>Техническая поддержка: +7 926 010 84 39</div>
+    </div>
+  </footer>
+</div>
+
+{% block extra_js %}
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+  const emailInput = document.getElementById('{{ form.email.id_for_label }}');
+  const passwordInput = document.getElementById('{{ form.password.id_for_label }}');
+  const loginButton = document.getElementById('login-button');
+
+  function updateFormValidity() {
+    const isFormValid =
+        emailInput.value.trim() !== '' &&
+        passwordInput.value.trim() !== '';
+    loginButton.disabled = !isFormValid;
+    loginButton.style.opacity = isFormValid ? '1' : '0.5';
+    loginButton.style.cursor = isFormValid ? 'pointer' : 'not-allowed';
+  }
+
+  emailInput.addEventListener('input', updateFormValidity);
+  passwordInput.addEventListener('input', updateFormValidity);
+
+  // Initial check
+  updateFormValidity();
+});
+</script>
+{% endblock %}
+{% endblock %}

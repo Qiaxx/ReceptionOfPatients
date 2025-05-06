@@ -1,0 +1,26 @@
+/* Additional custom styles for the login page */
+/* Most styling is handled by Tailwind CSS classes in the template */
+
+/* Focus states for inputs */
+input:focus {
+  outline: none;
+  border-color: #0d9488; /* teal-600 */
+}
+
+/* Placeholder label animation */
+input:focus + span,
+input:not(:placeholder-shown) + span {
+    transform: translateY(-50%);
+    font-size: 0.75rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .footer-links {
+    flex-direction: column;
+    gap: 1rem;
+  }
+}
+
+
+

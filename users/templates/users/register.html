@@ -1,0 +1,139 @@
+{% extends "basic.html" %}
+{% load static %}
+
+{% block title %}Регистрация пациента{% endblock %}
+
+{% block content %}
+<div class="flex flex-col min-h-full bg-white">
+  <header class="p-4 mb-8 bg-white shadow-sm">
+    <div class="flex justify-between items-center mx-auto my-0 max-w-[1232px]">
+      <img src="{% static 'media/logo.png' %}" class="object-cover overflow-hidden w-56 aspect-[2.42]" alt="Logo">
+      <div class="flex gap-2">
+        <a href="{% url 'users:register' %}" class="px-6 py-2 font-medium text-teal-600 bg-white rounded border border-teal-600 border-solid">
+          Зарегистрироваться
+        </a>
+        <a href="{% url 'users:login' %}" class="px-6 py-2 font-medium text-white bg-rose-600 rounded border-[none]">
+          Вход в личный кабинет
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Основной контент -->
+  <main class="container mx-auto px-4 py-8">
+    <div class="bg-white p-8 rounded shadow-md">
+      <h2 class="text-2xl font-bold mb-6">Регистрация пациента</h2>
+
+      {% if form.errors %}
+        <div class="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+          <ul class="list-disc list-inside text-sm space-y-1">
+            {% for field in form %}
+              {% for error in field.errors %}
+                <li><strong>{{ field.label }}:</strong> {{ error }}</li>
+              {% endfor %}
+            {% endfor %}
+            {% for error in form.non_field_errors %}
+              <li>{{ error }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
+
+      <!-- Форма регистрации -->
+      <form method="post" id="registration-form" action="{% url "users:register" %}">
+        {% csrf_token %}
+
+        <!-- Поле "Номер телефона" -->
+        <div class="mb-4 relative">
+          <input type="tel" id="{{ form.phone.id_for_label }}" name="{{ form.phone.name }}" placeholder=" " class="block w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-teal-600 peer" required>
+          <label for="{{ form.phone.id_for_label }}" class="absolute left-4 top-2 text-sm text-gray-500 transition-all duration-300 peer-focus:-top-2 peer-focus:text-xs peer-focus:text-teal-600">Номер телефона</label>
+          <p class="mt-1 text-sm text-gray-500">Номер телефона будет использоваться для входа в личный кабинет и уведомлений</p>
+        </div>
+
+        <!-- Поле "Электронная почта" -->
+        <div class="mb-4 relative">
+          <input type="email" id="{{ form.email.id_for_label }}" name="{{ form.email.name }}" placeholder=" " class="block w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-teal-600 peer" required>
+          <label for="{{ form.email.id_for_label }}" class="absolute left-4 top-2 text-sm text-gray-500 transition-all duration-300 peer-focus:-top-2 peer-focus:text-xs peer-focus:text-teal-600">Электронная почта</label>
+          <p class="mt-1 text-sm text-gray-500">Эл. почта будет использоваться для входа в личный кабинет и уведомлений</p>
+        </div>
+
+        <!-- Поле "Пароль" -->
+        <div class="mb-4 relative">
+          <input type="password" id="{{ form.password.id_for_label }}" name="{{ form.password.name }}" placeholder=" " class="block w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-teal-600 peer" required>
+          <label for="{{ form.password.id_for_label }}" class="absolute left-4 top-2 text-sm text-gray-500 transition-all duration-300 peer-focus:-top-2 peer-focus:text-xs peer-focus:text-teal-600">Пароль (не обязательно)</label>
+          <p class="mt-1 text-sm text-gray-500">Вы можете не указывать пароль и получить его в СМС.</p>
+        </div>
+
+        <!-- Информация о требованиях к паролю -->
+        <ul class="list-disc pl-5 mb-4">
+          <li>Не менее 13 символов</li>
+          <li>Не более 64 символов</li>
+          <li>Маленькие и большие английские буквы</li>
+          <li>Цифры</li>
+          <li>Не менее 3 групп символов</li>
+        </ul>
+
+        <!-- Соглашение -->
+        <div class="flex items-center mb-4">
+          <input type="checkbox" id="terms" name="terms" class="mr-2">
+          <label for="terms" class="text-sm">Регистрируясь, вы соглашаетесь с <a href="#" class="text-teal-600">условиями оказания услуг</a></label>
+        </div>
+
+        <!-- Кнопка "Создать аккаунт" -->
+        <button type="submit" id="create-account-btn" class="bg-rose-600 text-white px-4 py-2 rounded w-full">Создать аккаунт</button>
+      </form>
+
+      <!-- Подвал формы -->
+      <div class="text-center mt-4">
+        <p class="text-sm">Уже есть аккаунт?</p>
+        <a href="#" class="text-rose-600">Авторизуйтесь</a>
+      </div>
+    </div>
+  </main>
+
+  <!-- Подвал -->
+  <footer class="bg-white text-gray-500 text-sm p-4">
+    <div class="container mx-auto flex justify-between items-center">
+      <div>
+        <a href="#" class="mr-4">О компании</a>
+        <a href="#" class="mr-4">Пользовательское соглашение</a>
+        <a href="#">Наши учреждения</a>
+      </div>
+      <div>
+        Техническая поддержка: +7 926 010-84-39
+      </div>
+    </div>
+  </footer>
+</div>
+
+{% block extra_js %}
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const phoneInput = document.getElementById('{{ form.phone.id_for_label }}');
+    const emailInput = document.getElementById('{{ form.email.id_for_label }}');
+    const passwordInput = document.getElementById('{{ form.password.id_for_label }}');
+    const termsCheckbox = document.getElementById('terms');
+    const createAccountBtn = document.getElementById('create-account-btn');
+
+    function updateFormValidity() {
+      const isFormValid =
+          phoneInput.value.trim() !== '' &&
+          emailInput.value.trim() !== '' &&
+          termsCheckbox.checked;
+      createAccountBtn.disabled = !isFormValid;
+      createAccountBtn.style.opacity = isFormValid ? '1' : '0.5';
+      createAccountBtn.style.cursor = isFormValid ? 'pointer' : 'not-allowed';
+    }
+
+    // Обработчики событий для полей ввода
+    phoneInput.addEventListener('input', updateFormValidity);
+    emailInput.addEventListener('input', updateFormValidity);
+    passwordInput.addEventListener('input', updateFormValidity);
+    termsCheckbox.addEventListener('change', updateFormValidity);
+
+    // Инициализация проверки при загрузке страницы
+    updateFormValidity();
+  });
+</script>
+{% endblock %}
+{% endblock %}
