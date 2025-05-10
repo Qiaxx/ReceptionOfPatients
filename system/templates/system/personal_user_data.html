@@ -1,0 +1,175 @@
+{% extends "basic.html" %}
+{% load static %}
+
+{% block title %}Личные данные{% endblock %}
+
+{% block content %}
+<div class="flex flex-col min-h-full bg-white">
+  <header class="p-4 mb-8 bg-white shadow-sm">
+    <div class="flex justify-between items-center mx-auto my-0 max-w-[1232px]">
+      <img src="{% static 'media/logo.png' %}" class="object-cover overflow-hidden w-56 aspect-[2.42]" alt="Logo">
+      <div class="flex gap-2">
+        <a href="{% url 'users:register' %}" class="px-6 py-2 font-medium text-teal-600 bg-white rounded border border-teal-600 border-solid">
+          Зарегистрироваться
+        </a>
+        <a href="{% url 'users:login' %}" class="px-6 py-2 font-medium text-white bg-rose-600 rounded border-[none]">
+          Вход в личный кабинет
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Основной контент -->
+  <main class="container mx-auto px-4 py-8">
+    <div class="bg-white p-8 rounded shadow-md">
+      <h2 class="text-2xl font-bold mb-4">Личные данные</h2>
+      <p class="text-sm mb-6">Заполните немного личной информации о себе</p>
+
+      <!-- Форма регистрации -->
+      <form method="post" id="profile-form">
+        {% csrf_token %}
+
+        <!-- Изображение профиля -->
+        <div class="mb-4 flex items-center">
+          <div class="w-16 h-16 rounded-full bg-gray-300 flex items-center justify-center mr-4">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+              <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 017.824 2c9.982 0 14.76 2 14.977 2 .175 0 .2.002.2.002v0z" />
+              <path d="M12 7a3 3 0 110-6 3 3 0 010 6zm0 8a3 3 0 110-6 3 3 0 010 6zm6-9a5 5 0 01-5 5H1c-1.103 0-2-.897-2-2v-2c0-1.103.897-2 2-2h2a3 3 0 010 6h7a5 5 0 01-5 5v2c0 1.103.897 2 2 2h2a5 5 0 01-5-5z" />
+            </svg>
+          </div>
+          <div>
+            <p class="text-sm mb-2">Загрузите изображение с компьютера в формате JPG или PNG. Для того, чтобы сделать моментальную фотографию, необходим доступ к веб-камере.</p>
+            <button type="button" class="bg-teal-600 text-white px-4 py-2 rounded">Выбрать файл</button>
+          </div>
+        </div>
+
+        <!-- Поле "Фамилия" -->
+        <div class="mb-4 relative">
+          <input type="text" id="last_name" name="last_name" placeholder=" " class="block w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-teal-600 peer" required>
+          <label for="last_name" class="absolute left-4 top-2 text-sm text-gray-500 transition-all duration-300 peer-focus:-top-2 peer-focus:text-xs peer-focus:text-teal-600">Фамилия *</label>
+        </div>
+
+        <!-- Поле "Имя" -->
+        <div class="mb-4 relative">
+          <input type="text" id="first_name" name="first_name" placeholder=" " class="block w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-teal-600 peer" required>
+          <label for="first_name" class="absolute left-4 top-2 text-sm text-gray-500 transition-all duration-300 peer-focus:-top-2 peer-focus:text-xs peer-focus:text-teal-600">Имя *</label>
+        </div>
+
+        <!-- Поле "Отчество" -->
+        <div class="mb-4 relative">
+          <input type="text" id="middle_name" name="middle_name" placeholder=" " class="block w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-teal-600 peer">
+          <label for="middle_name" class="absolute left-4 top-2 text-sm text-gray-500 transition-all duration-300 peer-focus:-top-2 peer-focus:text-xs peer-focus:text-teal-600">Отчество</label>
+        </div>
+
+        <!-- Пол -->
+        <div class="mb-4" id="gender">
+          <label class="block text-sm mb-2">Пол</label>
+          <div class="flex gap-2">
+            <label class="px-4 py-2 border border-gray-300 rounded cursor-pointer hover:bg-teal-600 hover:text-white">
+              <input type="radio" name="gender" value="male" class="hidden"> Мужчина
+            </label>
+            <label class="px-4 py-2 border border-gray-300 rounded cursor-pointer hover:bg-teal-600 hover:text-white">
+              <input type="radio" name="gender" value="female" class="hidden"> Женщина
+            </label>
+          </div>
+        </div>
+
+        <!-- Дата рождения -->
+        <div class="mb-4">
+          <label for="date_of_birth" class="block text-sm mb-2">Дата рождения *</label>
+          <div class="flex gap-2">
+            <select id="day" name="day" class="px-4 py-2 border border-gray-300 rounded">
+              <option value="">Число</option>
+              {% for day in days %}
+                <option value="{{ day }}">{{ day }}</option>
+              {% endfor %}
+            </select>
+            <select id="month" name="month" class="px-4 py-2 border border-gray-300 rounded">
+              <option value="">Месяц</option>
+              {% for month in months %}
+                <option value="{{ month }}">{{ month }}</option>
+              {% endfor %}
+            </select>
+            <select id="year" name="year" class="px-4 py-2 border border-gray-300 rounded">
+              <option value="">Год</option>
+              {% for year in years %}
+                <option value="{{ year }}">{{ year }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+
+        <!-- Регион проживания -->
+        <div class="mb-4 relative">
+          <select id="region" name="region" class="block w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-teal-600 peer" required>
+            <option value=""></option>
+            {% for region in regions %}
+              <option value="{{ region.id }}">{{ region.name }}</option>
+            {% endfor %}
+          </select>
+          <label for="region" class="absolute left-4 top-2 text-sm text-gray-500 transition-all duration-300 peer-focus:-top-2 peer-focus:text-xs peer-focus:text-teal-600">Регион проживания *</label>
+        </div>
+
+        <!-- Кнопка "Продолжить" -->
+        <button type="submit" id="continue-btn" class="bg-rose-600 text-white px-4 py-2 rounded w-full" disabled>Продолжить</button>
+      </form>
+    </div>
+  </main>
+
+  <!-- Подвал -->
+  <footer class="bg-white text-gray-500 text-sm p-4">
+    <div class="container mx-auto flex justify-between items-center">
+      <div>
+        <a href="#" class="mr-4">О компании</a>
+        <a href="#" class="mr-4">Пользовательское соглашение</a>
+        <a href="#">Наши учреждения</a>
+      </div>
+      <div>
+        Техническая поддержка: +7 926 010-84-39
+      </div>
+    </div>
+  </footer>
+</div>
+
+{% block extra_js %}
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const last_nameInput = document.getElementById('last_name');
+    const first_nameInput = document.getElementById('first_name');
+    const genderInputs = document.querySelectorAll('input[name="gender"]');
+    const daySelect = document.getElementById('day');
+    const monthSelect = document.getElementById('month');
+    const yearSelect = document.getElementById('year');
+    const regionSelect = document.getElementById('region');
+    const continueBtn = document.getElementById('continue-btn');
+
+    function updateFormValidity() {
+      const isFormValid =
+        last_nameInput.value.trim() !== '' &&
+        first_nameInput.value.trim() !== '' &&
+        Array.from(genderInputs).some(input => input.checked) &&
+        daySelect.value !== '' &&
+        monthSelect.value !== '' &&
+        yearSelect.value !== '' &&
+        regionSelect.value !== '';
+
+      continueBtn.disabled = !isFormValid;
+      continueBtn.style.opacity = isFormValid ? '1' : '0.5';
+      continueBtn.style.cursor = isFormValid ? 'pointer' : 'not-allowed';
+    }
+
+    // Обработчики событий для полей ввода
+    last_nameInput.addEventListener('input', updateFormValidity);
+    first_nameInput.addEventListener('input', updateFormValidity);
+    genderInputs.forEach(input => input.addEventListener('change', updateFormValidity));
+    daySelect.addEventListener('change', updateFormValidity);
+    monthSelect.addEventListener('change', updateFormValidity);
+    yearSelect.addEventListener('change', updateFormValidity);
+    regionSelect.addEventListener('change', updateFormValidity);
+
+    // Инициализация проверки при загрузке страницы
+    updateFormValidity();
+  });
+</script>
+{% endblock %}
+{% endblock %}

@@ -1,0 +1,199 @@
+{% extends "basic.html" %}
+{% load static %}
+
+{% block title %}Онлайн консультации{% endblock %}
+
+{% block extra_css %}
+<style>
+  .tab-button {
+    color: #666;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    border: none;
+  }
+
+  .tab-button.active {
+    color: #009688;
+    border-bottom: 2px solid #009688;
+  }
+
+  .service-card {
+    padding: 2rem;
+    background-color: white;
+    border-radius: 0.75rem;
+    transition: transform 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .service-card:hover {
+    transform: translateY(-5px);
+  }
+
+  .btn-teal {
+    padding: 0.75rem;
+    width: 100%;
+    color: white;
+    background-color: #009688;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    border: none;
+    transition: background 0.3s ease;
+  }
+
+  .btn-teal:hover {
+    background-color: #00796b;
+  }
+
+  .btn-pink {
+    padding: 0.75rem;
+    width: 100%;
+    color: white;
+    background-color: #e91e63;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    border: none;
+    transition: background 0.3s ease;
+  }
+
+  .btn-pink:hover {
+    background-color: #c2185b;
+  }
+
+  .footer-link {
+    text-decoration: none;
+    color: #78716c;
+  }
+
+  .footer-link:hover {
+    color: #009688;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="p-5 mx-auto my-0 max-w-[1200px] text-zinc-800 max-md:p-4">
+  <header class="flex justify-between items-center mb-8 max-sm:flex-col max-sm:gap-5">
+    <img
+      alt="Клиническая больница 85 логотип"
+      src="{% static 'media/logo.png' %}"
+      class="object-cover overflow-hidden w-56 aspect-[2.42]"
+    />
+    <nav
+      role="tablist"
+      aria-label="Навигация по сервисам"
+      class="flex gap-5"
+    >
+      <button
+        class="tab-button active"
+        role="tab"
+        data-tab="Запись на прием"
+        aria-selected="true"
+        tabindex="0"
+      >
+        Запись на прием
+      </button>
+      <button
+        class="tab-button"
+        role="tab"
+        data-tab="Консультации и заявки"
+        aria-selected="false"
+        tabindex="-1"
+      >
+        Консультации и заявки
+      </button>
+      <button
+        class="tab-button"
+        role="tab"
+        data-tab="Электронная медицинская карта"
+        aria-selected="false"
+        tabindex="-1"
+      >
+        Электронная медицинская карта
+      </button>
+    </nav>
+  </header>
+  <main>
+    <div role="tabpanel" aria-label="Запись на прием">
+      <h1 class="mb-10 text-3xl text-center text-zinc-800 max-sm:text-2xl">
+        Онлайн консультации
+      </h1>
+      <div class="grid gap-8 grid-cols-[repeat(2,1fr)] max-md:grid-cols-[1fr]">
+        <div class="service-card">
+          <div class="mb-5 text-4xl text-center text-teal-600">📋</div>
+          <h3 class="mb-4 text-xl text-center">
+            Выписка Электронных рецептов
+          </h3>
+          <p class="mb-6 text-center text-stone-500">
+            Один из наших лучших специалистов свяжется с Вами в течение
+            нескольких минут
+          </p>
+          <button
+            class="btn-teal"
+            role="button"
+            aria-label="Получить электронную консультацию"
+            data-action="consultation"
+          >
+            Получить консультацию
+          </button>
+        </div>
+        <div class="service-card">
+          <div class="mb-5 text-4xl text-center text-teal-600">📅</div>
+          <h3 class="mb-4 text-xl text-center">
+            Профильного специалиста
+          </h3>
+          <p class="mb-6 text-center text-stone-500">
+            Запишитесь на удобное время для консультации с врачом
+          </p>
+          <button
+            class="btn-pink"
+            role="button"
+            aria-label="Записаться на прием к специалисту"
+            data-action="appointment"
+          >
+            Записаться
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+  <footer class="flex justify-between items-center px-0 py-5 mt-16 border-t border-solid border-t-zinc-100 max-sm:flex-col max-sm:gap-5 max-sm:text-center">
+    <div class="flex gap-5 max-sm:flex-col">
+      <a
+        class="footer-link"
+        href="/about"
+        aria-label="Информация о компании"
+      >
+        О компании
+      </a>
+      <a
+        class="footer-link"
+        href="/terms"
+        aria-label="Условия использования сервиса"
+      >
+        Пользовательское соглашение
+      </a>
+      <a
+        class="footer-link"
+        href="/locations"
+        aria-label="Список медицинских учреждений"
+      >
+        Наши учреждения
+      </a>
+    </div>
+    <div class="text-stone-500">
+      <span>Техническая поддержка: </span>
+      <a
+        href="tel:+79260108439"
+        aria-label="Позвонить в техническую поддержку"
+      >
+        +7 926 010 84 39
+      </a>
+    </div>
+  </footer>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/consultations.js' %}"></script>
+{% endblock %}
