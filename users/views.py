@@ -23,7 +23,7 @@ class LoginView(View):
             user = authenticate(username=email, password=password)
             if user is not None:
                 login(request, user)
-                return redirect('')
+                return redirect('system:choose')
             else:
                 messages.error(request, 'Неверный логин или пароль')
         return render(request, self.template_name, {'form': form})
@@ -31,7 +31,7 @@ class LoginView(View):
 class RegisterView(View):
     model = User
     template_name = 'users/register.html'
-    success_url = reverse_lazy("users:login")
+    success_url = reverse_lazy("system:register_patient_profile")
 
     def get(self, request):
         form = UserRegistrationForm()
