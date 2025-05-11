@@ -1,0 +1,170 @@
+{% extends 'basic.html' %}
+{% load static %}
+
+{% block title %}Запись на прием{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/appointments.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-white">
+  <header class="flex justify-between items-center px-5 py-4 border-b border-solid border-b-neutral-200">
+    <img
+      alt="Клиническая больница 85 логотип"
+      src="{% static 'media/logo.png' %}"
+      class="object-cover overflow-hidden w-56 aspect-[2.42]"
+    />
+    <div class="flex gap-2-5 items-center">
+      <span class="text-stone-500">{{ patient.last_name }} {{ patient.first_name }} {{ patient.middle_name }}</span>
+      <div class="w-10 h-10 bg-indigo-50 rounded-full"></div>
+    </div>
+  </header>
+
+  <nav class="px-5 py-4 border-b border-solid border-b-neutral-200">
+    <div class="flex gap-5">
+      <a
+        class="p-2 font-medium text-teal-600 no-underline active-nav-link"
+        href=""
+        aria-current="page"
+      >
+        Запись на прием
+      </a>
+      <a
+        class="p-2 no-underline text-stone-500"
+        href="#"
+      >
+        Консультации и заявки
+      </a>
+      <a
+        class="p-2 no-underline text-stone-500"
+        href="#"
+      >
+        Электронная медицинская карта
+      </a>
+    </div>
+  </nav>
+
+  <main class="px-5 py-8 mx-auto my-0 max-w-1200">
+    <h1 class="mb-8 text-2xl font-normal text-zinc-800">
+      Запишитесь на удобное время
+    </h1>
+
+    <div class="flex gap-8 mb-8">
+      <!-- Specialty Filter -->
+      <div class="w-250">
+        <div class="px-4 py-2-5 text-white bg-teal-600 rounded-2xl">
+          Выберите специальность
+        </div>
+        <div
+          class="specialty-list rounded-none border border-solid border-neutral-200 border-t-none"
+        >
+          <div
+            class="specialty-item px-4 py-2-5 cursor-pointer {% if not selected_specialty %}active{% endif %}"
+            data-specialty=""
+          >
+            Все специальности
+          </div>
+          {% for specialty in specialties %}
+          <div
+            class="specialty-item px-4 py-2-5 cursor-pointer {% if selected_specialty == specialty %}active{% endif %}"
+            data-specialty="{{ specialty }}"
+          >
+            {{ specialty }}
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Doctor List -->
+      <div class="flex-1">
+        <form id="filter-form" method="get" action="" class="mb-5">
+          <div class="flex gap-4 mb-5">
+            <div class="relative flex-1">
+              <label
+                for="doctor-search"
+                class="overflow-hidden absolute p-0 -m-px w-px h-px border-0"
+              >
+                Поиск врача по ФИО
+              </label>
+              <input
+                id="doctor-search"
+                name="search"
+                type="search"
+                placeholder="Поиск по ФИО врача"
+                aria-label="Поиск врача по ФИО"
+                class="px-4 py-2-5 pl-10 w-full text-base rounded border border-solid border-neutral-200"
+                value="{{ search_query }}"
+              />
+              <div class="absolute top-2/4 -translate-y-2/4 left-15 text-stone-500">
+                🔍
+              </div>
+            </div>
+          </div>
+
+          <input type="hidden" name="specialty" id="specialty-input" value="{{ selected_specialty }}">
+          <input type="hidden" name="sort" id="sort-input" value="{{ sort_by }}">
+        </form>
+
+        <div class="flex gap-4 mb-8">
+          <button
+            class="sort-btn pb-1-5 no-underline cursor-pointer border-none {% if sort_by == 'date' %}active{% endif %}"
+            data-sort="date"
+          >
+            по дате приема
+          </button>
+        </div>
+
+        <div class="flex flex-col gap-5">
+          {% for doctor in doctors %}
+          <div class="flex gap-5 p-5 rounded border border-solid border-neutral-200">
+            {% if doctor.photo %}
+              <img
+                class="object-cover overflow-hidden rounded aspect-square h-120 w-120"
+                src="{{ doctor.photo.url }}"
+                alt="{{ doctor.last_name }} {{ doctor.first_name }}"
+              />
+            {% else %}
+              <div class="h-120 w-120 bg-neutral-200 rounded flex items-center justify-center text-stone-400">
+                Нет фото
+              </div>
+            {% endif %}
+            <div class="flex-1">
+              <h2 class="mb-1-5 text-lg text-teal-600">
+                {{ doctor.last_name }} {{ doctor.first_name }} {{ doctor.middle_name }}
+              </h2>
+              <p class="mb-1-5 text-stone-500">{{ doctor.specialization }}</p>
+              <p class="mb-4 text-stone-500">
+                <span>Стаж: </span>
+                <span>{{ doctor.experience_years }} лет</span>
+              </p>
+              <div class="flex gap-8 mb-4">
+                <div>
+                  <div class="text-stone-500"></div>
+                  <div>
+                    <span></span>
+                    <span></span>
+                  </div>
+                </div>
+              </div>
+              <button
+                class="schedule-btn px-5 py-2 text-teal-600 bg-white rounded border border-teal-600 border-solid cursor-pointer"
+                data-doctor-id="{{ doctor.id }}"
+                aria-label="Записаться на прием к врачу {{ doctor.last_name }} {{ doctor.first_name }}"
+              >
+                Записаться на прием
+              </button>
+              <div class="calendar-container hidden mt-4" data-doctor-id="{{ doctor.id }}"></div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/appointments.js' %}"></script>
+{% endblock %}
