@@ -145,14 +145,15 @@
           <p class="mb-6 text-center text-stone-500">
             Запишитесь на удобное время для консультации с врачом
           </p>
-          <button
+          <a
             class="btn-pink"
             role="button"
             aria-label="Записаться на прием к специалисту"
             data-action="appointment"
+            href="{% url 'system:appointment' request.user.pk %}"
           >
             Записаться
-          </button>
+          </a>
         </div>
       </div>
     </div>

@@ -7,7 +7,7 @@ from django.views.generic import RedirectView
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('patient/', include('users.urls', namespace='users')),
-    path('patient/', include('system.urls_choose', namespace='system')),
+    path('patient/', include('system.urls', namespace='system')),
     path('patient/register/profile/', include('system.urls_profile', namespace='system')),
     path('', RedirectView.as_view(url='/patient/login/')),
 ]

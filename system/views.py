@@ -1,10 +1,12 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Q
 from django.utils import timezone
 from django.views import View
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from .forms import PatientProfileForm
-from .models import Region, PatientProfile
+from .models import Region, PatientProfile, Doctor
 
 
 @method_decorator(login_required, name='dispatch')
@@ -42,5 +44,43 @@ class ChooseView(View):
 
     def get(self, request, *args, **kwargs):
         return render(request, self.template_name)
+
+class AppointmentView(LoginRequiredMixin, View):
+    template_name = 'system/appointment.html'
+
+    def get(self, request, *args, **kwargs):
+        search_query = request.GET.get('search', '')
+        selected_specialty = request.GET.get('specialty', '')
+        sort_by = request.GET.get('sort', '')
+
+        doctors = Doctor.objects.all()
+
+        if selected_specialty:
+            doctors = doctors.filter(specialization=selected_specialty)
+
+        if search_query:
+            doctors = doctors.filter(
+                Q(first_name__icontains=search_query) |
+                Q(last_name__icontains=search_query) |
+                Q(middle_name__icontains=search_query)
+            )
+
+        if sort_by == 'date':
+            # Это временно — сортировка по id, т.к. слотов нет в контексте
+            doctors = doctors.order_by('id')
+
+        specialties = Doctor.objects.values_list('specialization', flat=True).distinct()
+        patient = PatientProfile.objects.get(user=request.user)
+
+        context = {
+            'doctors': doctors,
+            'specialties': specialties,
+            'selected_specialty': selected_specialty,
+            'search_query': search_query,
+            'sort_by': sort_by,
+            'patient': patient,
+        }
+
+        return render(request, self.template_name, context)
 
 
