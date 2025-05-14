@@ -1,0 +1,48 @@
+{% extends 'basic.html' %}
+{% load static %}
+
+{% block title %}Запись к врачу: {{ doctor.last_name }} {{ doctor.first_name }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/appointment_booking.css' %}">
+{% endblock %}
+
+{% block content %}
+<h2>Запись к врачу: {{ doctor.last_name }} {{ doctor.first_name }}</h2>
+
+<form method="post">
+  {% csrf_token %}
+  <div class="mb-3">
+      <label for="date" class="form-label">Выберите дату:</label>
+      <input type="date" class="form-control" id="date" name="date" required>
+  </div>
+
+  <label for="time">Выберите время:</label>
+  <select id="time" name="time" required>
+    <option value="">-- Выберите --</option>
+  </select>
+
+  <button type="submit">Записаться</button>
+</form>
+
+<script>
+document.getElementById('date').addEventListener('change', function () {
+  const date = this.value;
+  const doctorId = '{{ doctor.id }}';
+  fetch(`/patient/api/free_slots/?date=${date}&doctor_id=${doctorId}`)
+    .then(response => response.json())
+    .then(data => {
+      console.log(data);
+      const timeSelect = document.getElementById('time');
+      timeSelect.innerHTML = '<option value="">-- Выберите --</option>';
+      if (data.slots.length > 0) {
+        data.slots.forEach(time => {
+          timeSelect.innerHTML += `<option value="${time}">${time}</option>`;
+        });
+      } else {
+        timeSelect.innerHTML = '<option value="">Нет доступных слотов</option>';
+      }
+    });
+});
+</script>
+{% endblock %}

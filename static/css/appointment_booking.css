@@ -1,0 +1,47 @@
+/* Appointment Booking Styles */
+
+/* Form elements */
+input[type="date"] {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+/* Time slot button styles */
+.time-slot-btn {
+    background-color: white;
+    color: #333;
+    transition: all 0.2s ease;
+}
+
+.time-slot-btn:hover {
+    border-color: #0ca789;
+}
+
+.time-slot-btn.selected {
+    background-color: #0ca789;
+    color: white;
+    border-color: #0ca789;
+}
+
+/* Submit button hover effect */
+.submit-btn {
+    transition: background-color 0.2s ease;
+}
+
+.submit-btn:hover {
+    background-color: #e11d48;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    #time-slots-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    #time-slots-container {
+        grid-template-columns: repeat(1, 1fr);
+    }
+}

@@ -147,6 +147,7 @@
                   </div>
                 </div>
               </div>
+              <form action="{% url 'system:appointment' doctor.id %}" method="get">
               <button
                 class="schedule-btn px-5 py-2 text-teal-600 bg-white rounded border border-teal-600 border-solid cursor-pointer"
                 data-doctor-id="{{ doctor.id }}"
@@ -154,7 +155,8 @@
               >
                 Записаться на прием
               </button>
-              <div class="calendar-container hidden mt-4" data-doctor-id="{{ doctor.id }}"></div>
+              </form>
+{#              <div class="calendar-container hidden mt-4" data-doctor-id="{{ doctor.id }}"></div>#}
             </div>
           </div>
           {% endfor %}
