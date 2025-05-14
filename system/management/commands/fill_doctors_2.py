@@ -13,7 +13,7 @@ SPECIALIZATIONS = [
 ]
 
 class Command(BaseCommand):
-    help = 'Создает тестовых врачей и слоты по 30 минут на 5 дней вперед'
+    help = 'Создает тестовых врачей и слоты по 30 минут на 20 дней вперед'
 
     def handle(self, *args, **options):
         Doctor.objects.all().delete()
@@ -29,8 +29,8 @@ class Command(BaseCommand):
                 photo='doctors/default.jpg'
             )
 
-            # 5 дней вперед, каждый день с 9:00 до 17:00, по 30 минут
-            for i in range(5):
+            # 20 дней вперед, каждый день с 9:00 до 17:00, по 30 минут
+            for i in range(20):
                 current_date = timezone.now().date() + timedelta(days=i)
                 start_hour = 9
                 end_hour = 17

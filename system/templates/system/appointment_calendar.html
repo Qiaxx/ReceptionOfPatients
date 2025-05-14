@@ -8,41 +8,201 @@
 {% endblock %}
 
 {% block content %}
-<h2>Запись к врачу: {{ doctor.last_name }} {{ doctor.first_name }}</h2>
+<div class="min-h-screen bg-white">
+  <header class="flex justify-between items-center px-5 py-4 border-b border-solid border-b-neutral-200">
+    <img
+      alt="Клиническая больница 85 логотип"
+      src="{% static 'media/logo.png' %}"
+      class="object-cover overflow-hidden w-56 aspect-[2.42]"
+    />
+    <div class="flex gap-2.5 items-center">
+      <span class="text-stone-500">{{ patient.last_name }} {{ patient.first_name }} {{ patient.middle_name }}</span>
+      <div class="w-10 h-10 bg-indigo-50 rounded-full"></div>
+    </div>
+  </header>
 
-<form method="post">
-  {% csrf_token %}
-  <div class="mb-3">
-      <label for="date" class="form-label">Выберите дату:</label>
-      <input type="date" class="form-control" id="date" name="date" required>
-  </div>
+  <nav class="px-5 py-4 border-b border-solid border-b-neutral-200">
+    <div class="flex gap-5">
+      <a
+        class="p-2 font-medium text-teal-600 no-underline active-nav-link"
+        href=""
+        aria-current="page"
+      >
+        Запись на прием
+      </a>
+      <a
+        class="p-2 no-underline text-stone-500"
+        href="#"
+      >
+        Консультации и заявки
+      </a>
+      <a
+        class="p-2 no-underline text-stone-500"
+        href="#"
+      >
+        Электронная медицинская карта
+      </a>
+    </div>
+  </nav>
 
-  <label for="time">Выберите время:</label>
-  <select id="time" name="time" required>
-    <option value="">-- Выберите --</option>
-  </select>
+  <main class="px-5 py-10 mx-auto my-0 bg-gray-100 max-w-[1200px]">
+    <div class="p-8 rounded-lg bg-[white] shadow-[0_2px_4px_rgba(0,0,0,0.1)]">
+      <h1 class="mb-6 text-2xl text-zinc-800">Запись к врачу: {{ doctor.last_name }} {{ doctor.first_name }}</h1>
 
-  <button type="submit">Записаться</button>
-</form>
+      <form method="post" class="appointment-form">
+        {% csrf_token %}
+        <div class="flex gap-10 max-md:flex-col">
+          <div class="flex-1">
+            <h2 class="mb-5 text-2xl text-zinc-800">Выберите дату приёма</h2>
+            <div class="mb-5">
+              <label for="date" class="mb-2 text-sm text-stone-500">Дата приёма</label>
+              <input
+                type="date"
+                id="date"
+                name="date"
+                class="p-2.5 text-base rounded border border-solid border-stone-300 w-full"
+                required
+              >
+            </div>
+            <div class="text-sm text-stone-500 mt-4">
+              Выберите дату для просмотра доступных слотов времени
+            </div>
+          </div>
 
+          <div class="flex-1">
+            <h2 class="mb-5 text-2xl text-zinc-800">Время приёма</h2>
+            <div class="mb-5 text-sm text-stone-500">Московское время</div>
+            <div id="time-slots-container" class="grid gap-2.5 grid-cols-[repeat(4,1fr)]">
+              <div class="col-span-4 text-center text-stone-500">
+                Сначала выберите дату
+              </div>
+            </div>
+            <input type="hidden" id="selected-time" name="time" required>
+          </div>
+        </div>
+
+        <div class="flex justify-between items-center pt-5 mt-10 border-t border-solid border-t-zinc-100">
+          <div class="text-sm text-stone-500">
+            Вы записываетесь на консультацию длительностью 30 мин
+          </div>
+          <button
+            type="submit"
+            class="submit-btn px-8 py-4 text-base bg-rose-600 rounded cursor-pointer border-[none] text-[white]"
+          >
+            <span>Записаться на </span>
+            <span id="formatted-selection">выбранное время</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </main>
+</div>
+{% endblock %}
+
+{% block extra_js %}
 <script>
-document.getElementById('date').addEventListener('change', function () {
-  const date = this.value;
+document.addEventListener('DOMContentLoaded', function() {
+  const dateInput = document.getElementById('date');
+  const timeSlotsContainer = document.getElementById('time-slots-container');
+  const selectedTimeInput = document.getElementById('selected-time');
+  const formattedSelection = document.getElementById('formatted-selection');
   const doctorId = '{{ doctor.id }}';
-  fetch(`/patient/api/free_slots/?date=${date}&doctor_id=${doctorId}`)
-    .then(response => response.json())
-    .then(data => {
-      console.log(data);
-      const timeSelect = document.getElementById('time');
-      timeSelect.innerHTML = '<option value="">-- Выберите --</option>';
-      if (data.slots.length > 0) {
-        data.slots.forEach(time => {
-          timeSelect.innerHTML += `<option value="${time}">${time}</option>`;
-        });
+  let selectedTimeSlot = null;
+
+  // Set minimum date to today
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  const mm = String(today.getMonth() + 1).padStart(2, '0');
+  const dd = String(today.getDate()).padStart(2, '0');
+  dateInput.min = `${yyyy}-${mm}-${dd}`;
+
+  // Format date for display
+  function formatDate(dateString) {
+    const options = { day: 'numeric', month: 'long' };
+    return new Date(dateString).toLocaleDateString('ru-RU', options);
+  }
+
+  // Update the formatted selection text
+  function updateFormattedSelection() {
+    if (dateInput.value && selectedTimeSlot) {
+      const formattedDate = formatDate(dateInput.value);
+      formattedSelection.textContent = `${formattedDate} ${selectedTimeSlot}`;
+    } else {
+      formattedSelection.textContent = 'выбранное время';
+    }
+  }
+
+  // Select a time slot
+  function selectTimeSlot(timeSlot) {
+    selectedTimeSlot = timeSlot;
+    selectedTimeInput.value = timeSlot;
+
+    // Update UI
+    const timeSlotButtons = timeSlotsContainer.querySelectorAll('.time-slot-btn');
+    timeSlotButtons.forEach(btn => {
+      if (btn.textContent === timeSlot) {
+        btn.classList.add('selected');
       } else {
-        timeSelect.innerHTML = '<option value="">Нет доступных слотов</option>';
+        btn.classList.remove('selected');
       }
     });
+
+    updateFormattedSelection();
+  }
+
+  // Fetch available time slots when date changes
+  dateInput.addEventListener('change', function() {
+    const date = this.value;
+
+    // Show loading state
+    timeSlotsContainer.innerHTML = '<div class="col-span-4 text-center text-stone-500">Загрузка доступных слотов...</div>';
+
+    // Reset selected time
+    selectedTimeSlot = null;
+    selectedTimeInput.value = '';
+
+    // Fetch available slots from API
+    fetch(`/patient/api/free_slots/?date=${date}&doctor_id=${doctorId}`)
+      .then(response => response.json())
+      .then(data => {
+        if (data.slots && data.slots.length > 0) {
+          // Clear container
+          timeSlotsContainer.innerHTML = '';
+
+          // Add time slot buttons
+          data.slots.forEach(time => {
+            const timeBtn = document.createElement('button');
+            timeBtn.type = 'button'; // Prevent form submission on click
+            timeBtn.className = 'time-slot-btn p-2.5 rounded border border-solid cursor-pointer border-zinc-300';
+            timeBtn.textContent = time;
+
+            timeBtn.addEventListener('click', function() {
+              selectTimeSlot(time);
+            });
+
+            timeSlotsContainer.appendChild(timeBtn);
+          });
+        } else {
+          timeSlotsContainer.innerHTML = '<div class="col-span-4 text-center text-stone-500">Нет доступных слотов на выбранную дату</div>';
+        }
+
+        updateFormattedSelection();
+      })
+      .catch(error => {
+        console.error('Error fetching time slots:', error);
+        timeSlotsContainer.innerHTML = '<div class="col-span-4 text-center text-red-500">Ошибка при загрузке слотов. Пожалуйста, попробуйте еще раз.</div>';
+      });
+
+    updateFormattedSelection();
+  });
+
+  // Form validation before submit
+  document.querySelector('.appointment-form').addEventListener('submit', function(e) {
+    if (!dateInput.value || !selectedTimeInput.value) {
+      e.preventDefault();
+      alert('Пожалуйста, выберите дату и время приёма');
+    }
+  });
 });
 </script>
 {% endblock %}
