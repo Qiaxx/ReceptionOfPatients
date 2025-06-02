@@ -34,6 +34,14 @@
           </div>
         {% endif %}
 
+        {% if form.non_field_errors %}
+          <div class="mb-4 p-3 bg-red-100 text-red-700 rounded">
+            {% for error in form.non_field_errors %}
+              <p>{{ error }}</p>
+            {% endfor %}
+          </div>
+        {% endif %}
+
         <div class="relative mb-4">
           <input type="text" id="{{ form.email.id_for_label }}" name="{{ form.email.name }}" class="block w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-teal-600 peer" placeholder=" " required>
           <label for="{{ form.email.id_for_label }}" class="absolute left-4 top-2 text-sm text-gray-500 transition-all duration-300 peer-focus:-top-2 peer-focus:text-xs peer-focus:text-teal-600">

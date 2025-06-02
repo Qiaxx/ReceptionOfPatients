@@ -15,7 +15,7 @@ from .models import Region, PatientProfile, Doctor, AppointmentSlot, Appointment
 @method_decorator(login_required, name='dispatch')
 class RegisterPatientProfileView(View):
     model = PatientProfile
-    template_name = 'system/personal_user_data.html'
+    template_name = 'system/register_patient_profile.html'
     success_url = 'users:login'
 
     def get_context_data(self, **kwargs):
@@ -154,7 +154,7 @@ class AppointmentView(View):
         slot.is_booked = True
         slot.save()
 
-        return redirect('system:choose')  # Замените на ваш маршрут успешной записи
+        return redirect('system:choose')
 
 
 def get_free_slots(request):

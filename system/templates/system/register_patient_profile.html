@@ -26,7 +26,7 @@
       <p class="text-sm mb-6">Заполните немного личной информации о себе</p>
 
       <!-- Форма регистрации -->
-      <form method="post" id="profile-form">
+      <form method="post" id="profile-form" action="{% url "system_profile:register_patient_profile" %}">
         {% csrf_token %}
 
         <!-- Изображение профиля -->

@@ -31,7 +31,7 @@ class LoginView(View):
 class RegisterView(View):
     model = User
     template_name = 'users/register.html'
-    success_url = reverse_lazy("system:register_patient_profile")
+    success_url = reverse_lazy("system_profile:register_patient_profile")
 
     def get(self, request):
         form = UserRegistrationForm()
@@ -45,7 +45,6 @@ class RegisterView(View):
             phone = form.cleaned_data['phone']
             password = form.cleaned_data['password']
 
-            # Create the user
             user = User.objects.create_user(
                 email=email,
                 password=password
@@ -53,10 +52,6 @@ class RegisterView(View):
             user.phone = phone
             user.save()
 
-            # You could save the phone number to a profile model
-            # if you have one, or extend the User model
-
-            # Log the user in
             login(request, user)
             messages.success(request, 'Регистрация успешно завершена!')
             return redirect(self.success_url)
@@ -71,5 +66,4 @@ class ForgotPasswordView(View):
     template_name = 'users/forgot_password.html'
 
     def get(self, request):
-        # Forgot password view will be implemented separately
         return render(request, self.template_name, {})
